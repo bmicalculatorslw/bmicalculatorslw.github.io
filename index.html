@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>BMI Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 480px;
+      text-align: center;
+    }
+    h2 {
+      color: #330033;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      color: #330033;
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 6px;
+      background-color: #cc99ff;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      color: #000;
+    }
+    .radio-group {
+      margin-top: 5px;
+      display: flex;
+      gap: 20px;
+      text-align: left;
+    }
+    .radio-group label {
+      margin: 0;
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      margin-top: 10px;
+      background-color: #cc99ff;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+      resize: none;
+      color: #000;
+    }
+    .btn-group {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      flex: 1;
+      margin: 0 5px;
+      padding: 10px 0;
+      background-color: #cc99ff;
+      color: #000;
+      border: 1px solid #330033;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    button:hover {
+      background-color: #b266ff;
+    }
+    .silhouettes {
+      margin-top: 20px;
+    }
+    .silhouettes img {
+      width: 100%;
+      max-width: 350px;
+    }
+    .disclaimer {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cek Keidealan Tubuhmu Disini!</h2>
+    <label for="nama">Nama:</label>
+    <input type="text" id="nama">
+
+    <label for="berat">Berat Badan (kg):</label>
+    <input type="text" id="berat">
+
+    <label for="tinggi">Tinggi Badan (cm):</label>
+    <input type="text" id="tinggi">
+
+    <label>Jenis Kelamin:</label>
+    <div class="radio-group">
+      <label><input type="radio" name="gender" id="wanita" value="wanita"> Wanita</label>
+      <label><input type="radio" name="gender" id="pria" value="pria"> Pria</label>
+    </div>
+
+    <label for="hasil">Hasil:</label>
+    <textarea id="hasil" readonly></textarea>
+
+    <div class="btn-group">
+      <button onclick="prosesBMI()">Proses</button>
+      <button onclick="resetForm()">Ulangi</button>
+      <button onclick="tampilkanSaran()">Saran</button>
+    </div>
+
+    <p class="disclaimer">
+      *Klik tombol "Saran" akan mengarahkan Anda ke situs kesehatan eksternal seperti Alodokter, Halodoc, dan lainnya. Kami hanya menyediakan tautan dan tidak bertanggung jawab atas isi yang terdapat di situs tersebut.
+    </p>
+
+  <script>
+    let kategoriTerakhir = "";
+
+    function prosesBMI() {
+      const nama = document.getElementById('nama').value;
+      const berat = parseFloat(document.getElementById('berat').value);
+      const tinggi = parseFloat(document.getElementById('tinggi').value) / 100;
+      const gender = document.querySelector('input[name="gender"]:checked');
+
+      if (!nama || isNaN(berat) || isNaN(tinggi) || !gender) {
+        alert('Mohon isi semua field dengan benar.');
+        return;
+      }
+
+      const bmi = berat / (tinggi * tinggi);
+      let kategori = '';
+
+      if (bmi < 18.5) kategori = 'Kurus';
+      else if (bmi < 25) kategori = 'Normal';
+      else if (bmi < 30) kategori = 'Gemuk';
+      else kategori = 'Obesitas';
+
+      kategoriTerakhir = kategori;
+
+      const hasil = `${nama}, BMI kamu adalah ${bmi.toFixed(2)} (${kategori})`;
+      document.getElementById('hasil').value = hasil;
+    }
+
+    function resetForm() {
+      document.getElementById('nama').value = '';
+      document.getElementById('berat').value = '';
+      document.getElementById('tinggi').value = '';
+      document.getElementById('hasil').value = '';
+      document.querySelectorAll('input[name="gender"]').forEach(el => el.checked = false);
+      kategoriTerakhir = "";
+    }
+
+    function tampilkanSaran() {
+      const linkMap = {
+        "Kurus": "https://www.alodokter.com/menambah-berat-badan-menjadi-lebih-ideal",
+        "Normal": "https://www.halodoc.com/artikel/pola-hidup-sehat-untuk-menjaga-berat-badan-ideal",
+        "Gemuk": "https://web.rshs.go.id/ketidakseimbangan-tubuh-berat-badan-tidak-ideal/",
+        "Obesitas": "https://www.halodoc.com/artikel/ketahui-tips-diet-sehat-bagi-pengidap-obesitas"
+      };
+
+      if (!kategoriTerakhir) {
+        alert("Silakan klik tombol 'Proses' terlebih dahulu.");
+        return;
+      }
+
+      const link = linkMap[kategoriTerakhir];
+      if (link) {
+        window.open(link, '_blank');
+      } else {
+        alert("Kategori tidak dikenali untuk saran.");
+      }
+    }
+  </script>
+</body>
+</html>
